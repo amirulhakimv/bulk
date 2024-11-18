@@ -1,10 +1,10 @@
-import 'package:bulkfitness/components/my_user_suggestion.dart';
 import 'package:flutter/material.dart';
 import '../../components/my_appbar.dart';
 import '../../components/my_chat_preview.dart';
 import '../../components/my_chat_screen.dart';
 import '../../components/my_group_suggestion.dart';
 import '../../components/my_post_item.dart';
+import '../../components/my_user_suggestion.dart';
 import '../../components/post_interaction_logic.dart';
 import 'upload_post_page.dart';
 import 'user_profile_page.dart';
@@ -173,9 +173,7 @@ class _SocialPageState extends State<SocialPage> with SingleTickerProviderStateM
     return chatData.values.fold(0, (sum, chat) => sum + (chat['unreadCount'] as int));
   }
 
-  void _showCommentsDialog(BuildContext context, List<dynamic> comments,
-      int postIndex,
-      {bool isDiscoverPost = false}) {
+  void _showCommentsDialog(BuildContext context, List<dynamic> comments, int postIndex, {bool isDiscoverPost = false}) {
     final TextEditingController _commentController = TextEditingController();
     _replyingTo = '';
     _replyingToId = '';
@@ -244,6 +242,13 @@ class _SocialPageState extends State<SocialPage> with SingleTickerProviderStateM
                           _replyingToId,
                           _isReplyToReply,
                           setModalState,
+                              () {
+                            setModalState(() {
+                              _replyingTo = '';
+                              _replyingToId = '';
+                              _isReplyToReply = false;
+                            });
+                          },
                         ),
                       ],
                     ),
