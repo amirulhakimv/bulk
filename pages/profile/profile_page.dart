@@ -36,6 +36,14 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     super.dispose();
   }
 
+  void _resetReplyingTo() {
+    setState(() {
+      _replyingTo = '';
+      _replyingToId = '';
+      _isReplyToReply = false;
+    });
+  }
+
   void _showCommentsDialog(BuildContext context, List<dynamic> comments, int postIndex) {
     final TextEditingController _commentController = TextEditingController();
     _replyingTo = '';
@@ -58,58 +66,62 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 minChildSize: 0.5,
                 maxChildSize: 1,
                 builder: (_, controller) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 4,
-                          width: 40,
-                          margin: EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[600],
-                            borderRadius: BorderRadius.circular(2),
+                  return GestureDetector(
+                    onTap: () => _resetReplyingTo(),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[900],
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 4,
+                            width: 40,
+                            margin: EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[600],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            controller: controller,
-                            itemCount: comments.length,
-                            itemBuilder: (context, index) {
-                              return PostInteractionLogic.buildCommentTile(
-                                comments[index],
-                                postIndex,
-                                index,
-                                widget.posts,
-                                    (username, parentId, isReplyToReply) {
-                                  setModalState(() {
-                                    _replyingTo = username;
-                                    _replyingToId = parentId;
-                                    _isReplyToReply = isReplyToReply;
-                                  });
-                                },
-                                setModalState,
-                                    (String username) {
-                                  // Implement the logic to view the user's profile
-                                  print('Viewing profile of $username');
-                                },
-                              );
-                            },
+                          Expanded(
+                            child: ListView.builder(
+                              controller: controller,
+                              itemCount: comments.length,
+                              itemBuilder: (context, index) {
+                                return PostInteractionLogic.buildCommentTile(
+                                  comments[index],
+                                  postIndex,
+                                  index,
+                                  widget.posts,
+                                      (username, parentId, isReplyToReply) {
+                                    setModalState(() {
+                                      _replyingTo = username;
+                                      _replyingToId = parentId;
+                                      _isReplyToReply = isReplyToReply;
+                                    });
+                                  },
+                                  setModalState,
+                                      (String username) {
+                                    // Implement the logic to view the user's profile
+                                    print('Viewing profile of $username');
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        PostInteractionLogic.buildCommentInput(
-                          postIndex,
-                          widget.posts,
-                          _commentController,
-                          _replyingTo,
-                          _replyingToId,
-                          _isReplyToReply,
-                          setModalState,
-                        ),
-                      ],
+                          PostInteractionLogic.buildCommentInput(
+                            postIndex,
+                            widget.posts,
+                            _commentController,
+                            _replyingTo,
+                            _replyingToId,
+                            _isReplyToReply,
+                            setModalState,
+                            _resetReplyingTo,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
